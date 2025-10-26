@@ -1,0 +1,259 @@
+[
+  {
+    "id": "KB001",
+    "category": "Password Reset",
+    "title": "How to Reset Your Password",
+    "content": "To reset your company password:\n1. Go to https://password.company.com\n2. Click 'Forgot Password'\n3. Enter your employee ID and registered email\n4. Check your email for reset link (valid for 24 hours)\n5. Create a new password following policy: minimum 12 characters, uppercase, lowercase, number, and special character\n6. Login with new credentials\nIf you don't receive the email within 15 minutes, contact IT support.",
+    "tags": [
+      "password",
+      "reset",
+      "login",
+      "access"
+    ],
+    "related_issues": [
+      "account_locked",
+      "email_access"
+    ]
+  },
+  {
+    "id": "KB002",
+    "category": "VPN Setup",
+    "title": "VPN Connection Setup Guide",
+    "content": "Setting up company VPN:\n1. Download Cisco AnyConnect from company portal\n2. Install the application (requires admin rights)\n3. Launch Cisco AnyConnect\n4. Enter VPN address: vpn.company.com\n5. Use your network credentials (same as Windows login)\n6. Accept the security certificate\n7. You're connected when you see the green checkmark\nTroubleshooting: If connection fails, ensure your antivirus allows VPN traffic. Check firewall settings.",
+    "tags": [
+      "vpn",
+      "remote",
+      "connection",
+      "cisco",
+      "anyconnect"
+    ],
+    "related_issues": [
+      "remote_access",
+      "network_issues"
+    ]
+  },
+  {
+    "id": "KB003",
+    "category": "Software Installation",
+    "title": "Installing Microsoft Office 365",
+    "content": "To install Office 365:\n1. Login to https://portal.office.com with company email\n2. Click 'Install Office' button (top right)\n3. Select 'Office 365 apps'\n4. Download and run the installer\n5. Sign in with your company email when prompted\n6. Office apps will install automatically (Word, Excel, PowerPoint, Outlook, Teams)\n7. Restart your computer after installation\nLicense: Your account includes 5 device installations. Deactivate unused devices from portal.",
+    "tags": [
+      "office",
+      "microsoft",
+      "software",
+      "installation",
+      "365"
+    ],
+    "related_issues": [
+      "software_license",
+      "activation"
+    ]
+  },
+  {
+    "id": "KB004",
+    "category": "Email Issues",
+    "title": "Outlook Email Not Syncing",
+    "content": "If Outlook isn't syncing:\n1. Check internet connection\n2. Verify you're connected to VPN (if remote)\n3. Click Send/Receive All Folders button\n4. Clear Outlook cache: File > Options > Advanced > Outlook Data File Settings\n5. Restart Outlook in safe mode: Hold Ctrl while launching\n6. Repair Outlook data file: Control Panel > Mail > Data Files > Settings > Compact Now\n7. Recreate Outlook profile if issue persists\nCheck mailbox size: Limit is 50GB. Archive old emails if near limit.",
+    "tags": [
+      "outlook",
+      "email",
+      "sync",
+      "mail",
+      "not working"
+    ],
+    "related_issues": [
+      "email_not_received",
+      "slow_outlook"
+    ]
+  },
+  {
+    "id": "KB005",
+    "category": "Hardware Issues",
+    "title": "Printer Not Responding",
+    "content": "Troubleshooting printer issues:\n1. Check printer power and cable connections\n2. Verify printer shows as 'Ready' on display\n3. On computer: Control Panel > Devices and Printers\n4. Right-click printer > Set as default printer\n5. Right-click printer > See what's printing > Cancel all documents\n6. Restart Print Spooler service: Services.msc > Print Spooler > Restart\n7. Update printer driver from manufacturer website\n8. For network printers, verify network connection and IP address\nCommon issue: Printer offline mode. Right-click printer > uncheck 'Use Printer Offline'.",
+    "tags": [
+      "printer",
+      "printing",
+      "hardware",
+      "not responding",
+      "offline"
+    ],
+    "related_issues": [
+      "print_queue",
+      "driver_issue"
+    ]
+  },
+  {
+    "id": "KB006",
+    "category": "Access Request",
+    "title": "Requesting Access to Shared Drives",
+    "content": "To request access to shared network drives:\n1. Open ServiceNow portal: https://service.company.com\n2. Click 'Request Access'\n3. Select 'Network Drive Access'\n4. Enter drive path (e.g., \\\\fileserver\\department)\n5. Specify access level needed: Read or Read/Write\n6. Provide business justification\n7. Select your manager for approval\n8. Submit request (typical approval time: 2-4 hours)\nAccess is automatically granted after manager approval. You'll receive email notification.",
+    "tags": [
+      "access",
+      "permissions",
+      "shared drive",
+      "folder",
+      "network"
+    ],
+    "related_issues": [
+      "permission_denied",
+      "folder_access"
+    ]
+  },
+  {
+    "id": "KB007",
+    "category": "Software Issues",
+    "title": "Application Freezing or Crashing",
+    "content": "When applications freeze or crash:\n1. Wait 30 seconds - application may be processing\n2. Check Task Manager (Ctrl+Shift+Esc) for CPU/memory usage\n3. End unresponsive application: Task Manager > select app > End Task\n4. Clear application cache and temp files\n5. Update application to latest version\n6. Check available disk space (need at least 20GB free)\n7. Scan for malware using company antivirus\n8. Check Windows Event Viewer for error logs\nIf problem persists with specific application, create IT ticket with error screenshots.",
+    "tags": [
+      "application",
+      "crash",
+      "freeze",
+      "not responding",
+      "software"
+    ],
+    "related_issues": [
+      "slow_computer",
+      "performance"
+    ]
+  },
+  {
+    "id": "KB008",
+    "category": "Account Issues",
+    "title": "Account Locked Out",
+    "content": "If your account is locked:\n1. Account locks after 5 failed login attempts\n2. Automatic unlock occurs after 30 minutes\n3. For immediate unlock: Call IT Help Desk at ext. 4357\n4. Verify you're using correct password (check Caps Lock)\n5. Password expires every 90 days - reset if needed\n6. If repeatedly locking, your password may be compromised\nPrevention: Never share passwords, use password manager, enable MFA (multi-factor authentication).",
+    "tags": [
+      "locked",
+      "account",
+      "login",
+      "lockout",
+      "access denied"
+    ],
+    "related_issues": [
+      "password_reset",
+      "cannot_login"
+    ]
+  },
+  {
+    "id": "KB009",
+    "category": "Network Issues",
+    "title": "No Internet Connection",
+    "content": "Troubleshooting internet connectivity:\n1. Check physical connections: ethernet cable or WiFi\n2. For WiFi: Ensure connected to company network (CompanyWiFi)\n3. Restart network adapter: Network Settings > Change adapter options > Disable/Enable\n4. Release and renew IP: Command Prompt (Admin) > ipconfig /release then ipconfig /renew\n5. Flush DNS: ipconfig /flushdns\n6. Check proxy settings: Internet Options > Connections > LAN settings\n7. Temporarily disable antivirus/firewall to test\n8. Restart computer\nFor company WiFi password: Contact IT Help Desk (changes quarterly).",
+    "tags": [
+      "internet",
+      "network",
+      "connection",
+      "wifi",
+      "connectivity"
+    ],
+    "related_issues": [
+      "vpn_issues",
+      "slow_internet"
+    ]
+  },
+  {
+    "id": "KB010",
+    "category": "Mobile Device",
+    "title": "Setting Up Company Email on Mobile",
+    "content": "Configure company email on smartphone:\nFor iPhone:\n1. Settings > Mail > Accounts > Add Account > Exchange\n2. Email: your.email@company.com\n3. Server: outlook.office365.com\n4. Domain: leave blank\n5. Username: your.email@company.com\n6. Password: your company password\n7. Enable Mail, Contacts, Calendars\n\nFor Android:\n1. Settings > Accounts > Add Account > Exchange\n2. Enter email and password\n3. Server: outlook.office365.com\n4. Domain\\Username: company\\your.email\n5. Complete setup\n\nMFA may require Microsoft Authenticator app approval.",
+    "tags": [
+      "mobile",
+      "phone",
+      "email",
+      "iphone",
+      "android",
+      "setup"
+    ],
+    "related_issues": [
+      "mobile_access",
+      "email_sync"
+    ]
+  },
+  {
+    "id": "KB011",
+    "category": "Security",
+    "title": "Reporting Phishing or Suspicious Emails",
+    "content": "If you receive suspicious email:\nDO NOT:\n- Click any links\n- Download attachments\n- Reply to sender\n- Provide personal information\n\nDO:\n1. In Outlook, select the email\n2. Click Report Message button (top ribbon)\n3. Select 'Phishing'\n4. Email forwards to security team automatically\n5. Delete email from inbox\n\nWarning signs of phishing:\n- Urgent requests for action\n- Requests for password/personal info\n- Suspicious sender address\n- Poor grammar/spelling\n- Unexpected attachments\n- Mismatched URLs (hover to check)\n\nSecurity team reviews within 1 hour. Stay vigilant!",
+    "tags": [
+      "phishing",
+      "security",
+      "suspicious",
+      "email",
+      "spam",
+      "scam"
+    ],
+    "related_issues": [
+      "security_incident",
+      "compromised_account"
+    ]
+  },
+  {
+    "id": "KB012",
+    "category": "Teams",
+    "title": "Microsoft Teams Audio/Video Issues",
+    "content": "Troubleshooting Teams meeting problems:\nAudio issues:\n1. Click profile picture > Settings > Devices\n2. Test audio device and speaker\n3. Ensure correct microphone selected\n4. Check microphone isn't muted (hardware switch)\n5. Grant Teams microphone permissions (Windows Settings > Privacy)\n\nVideo issues:\n1. Verify camera isn't used by another app\n2. Check camera privacy settings\n3. Update camera driver\n4. Restart Teams completely (not just close)\n\nPoor quality:\n1. Close unnecessary applications\n2. Use wired connection instead of WiFi\n3. Reduce video quality: Settings > Call quality\n4. Check bandwidth: need 1.5 Mbps for video calls",
+    "tags": [
+      "teams",
+      "meeting",
+      "audio",
+      "video",
+      "camera",
+      "microphone"
+    ],
+    "related_issues": [
+      "video_conferencing",
+      "call_quality"
+    ]
+  },
+  {
+    "id": "KB013",
+    "category": "Data Backup",
+    "title": "How to Backup Your Work Files",
+    "content": "Company backup options:\nOneDrive (Recommended):\n1. Save files to OneDrive folder (auto-syncs)\n2. Files accessible from any device\n3. 1TB storage per user\n4. Automatic versioning (restore previous versions)\n\nNetwork Drives:\n1. Save to department shared drives\n2. IT performs nightly backups\n3. File recovery available up to 30 days\n\nDO NOT store critical files only on local C: drive\nBackup frequency: OneDrive syncs continuously, Network drives backed up daily at midnight\n\nTo restore deleted files:\nOneDrive: Check Recycle Bin (90 day retention)\nNetwork: Submit IT ticket with file path and date needed",
+    "tags": [
+      "backup",
+      "onedrive",
+      "files",
+      "recovery",
+      "storage"
+    ],
+    "related_issues": [
+      "file_recovery",
+      "deleted_files"
+    ]
+  },
+  {
+    "id": "KB014",
+    "category": "Performance",
+    "title": "Computer Running Slow",
+    "content": "Speed up slow computer:\nImmediate actions:\n1. Close unnecessary programs and browser tabs\n2. Restart computer (if not done in 7+ days)\n3. Check Task Manager for resource-hungry processes\n4. Disconnect external drives\n\nMaintenance:\n1. Run Disk Cleanup: Search > Disk Cleanup\n2. Empty Recycle Bin\n3. Clear browser cache\n4. Uninstall unused programs\n5. Disable startup programs: Task Manager > Startup tab\n6. Check disk space: Need 20GB+ free\n7. Run Windows Update\n8. Perform malware scan\n9. Defragment hard drive (if using HDD, not SSD)\n\nIf still slow after all steps, may need hardware upgrade. Contact IT for evaluation.",
+    "tags": [
+      "slow",
+      "performance",
+      "speed",
+      "computer",
+      "lag"
+    ],
+    "related_issues": [
+      "application_crash",
+      "freeze"
+    ]
+  },
+  {
+    "id": "KB015",
+    "category": "System Access",
+    "title": "Multi-Factor Authentication (MFA) Setup",
+    "content": "Setting up MFA for enhanced security:\n1. Install Microsoft Authenticator on smartphone\n2. Login to https://aka.ms/mfasetup\n3. Click 'Set up Authenticator app'\n4. Scan QR code with Authenticator app\n5. Enter 6-digit code shown in app\n6. Complete setup\n\nUsing MFA:\n- Login with username/password\n- Approve notification on phone OR enter code from app\n- Option to trust device for 30 days\n\nLost phone?\n- Use backup codes (provided during setup)\n- Call IT Help Desk for emergency access\n- Update phone number: https://aka.ms/mfasetup\n\nMFA is mandatory for all employees for security compliance.",
+    "tags": [
+      "mfa",
+      "authentication",
+      "security",
+      "2fa",
+      "two-factor"
+    ],
+    "related_issues": [
+      "login_issues",
+      "security_setup"
+    ]
+  }
+]
