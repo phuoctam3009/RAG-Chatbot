@@ -1,13 +1,10 @@
 """
 Streamlit UI for IT Support Chatbot
+Enhanced version with creative knowledge base stats and fixed common questions
 """
 
 import streamlit as st
 from chatbot import ITSupportChatbot
-from function_calling import (
-    create_support_ticket, check_ticket_status, 
-    check_system_status, search_employee_directory
-)
 import json
 
 # Page configuration
@@ -55,6 +52,19 @@ st.markdown("""
         border-left: 4px solid #4caf50;
         margin: 1rem 0;
     }
+    .common-question-btn {
+        background-color: #e3f2fd;
+        padding: 0.8rem;
+        border-radius: 0.5rem;
+        border: 2px solid #1f77b4;
+        cursor: pointer;
+        margin: 0.5rem 0;
+        transition: all 0.3s;
+    }
+    .common-question-btn:hover {
+        background-color: #bbdefb;
+        transform: translateY(-2px);
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -70,8 +80,8 @@ if 'chatbot' not in st.session_state:
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 
-if 'ticket_counter' not in st.session_state:
-    st.session_state.ticket_counter = 1000
+if 'show_kb_stats' not in st.session_state:
+    st.session_state.show_kb_stats = False
 
 # Header
 st.markdown('<div class="main-header">🤖 IT Support Chatbot</div>', unsafe_allow_html=True)
@@ -82,7 +92,7 @@ if not st.session_state.get('initialized', False):
     st.error(f"⚠️ Failed to initialize chatbot: {st.session_state.get('error', 'Unknown error')}")
     st.info("💡 Please ensure you have:")
     st.markdown("""
-    1. Created a `.env` file with your Azure OpenAI credentials
+    1. Created a `.env` file with your OpenAI or Azure OpenAI credentials
     2. Run `python build_vector_store.py` to create the vector store
     3. Installed all requirements: `pip install -r requirements.txt`
     """)
@@ -90,93 +100,80 @@ if not st.session_state.get('initialized', False):
 
 # Sidebar
 with st.sidebar:
-    st.header("🛠️ IT Support Tools")
-    
-    # System Status Checker
-    with st.expander("📊 Check System Status"):
-        system = st.selectbox(
-            "Select System",
-            ["email", "vpn", "file_server", "internet", "office365", "printer"]
-        )
-        if st.button("Check Status"):
-            status = check_system_status(system)
-            if status.get("status") == "operational":
-                st.success(f"✅ {system.upper()} is operational")
-                st.info(f"Uptime: {status.get('uptime', 'N/A')}")
-            elif status.get("status") == "degraded":
-                st.warning(f"⚠️ {system.upper()} is experiencing issues")
-                st.info(status.get("note", ""))
-            else:
-                st.error(f"❌ {system.upper()} status unknown")
-    
-    # Ticket Status Checker
-    with st.expander("🎫 Check Ticket Status"):
-        ticket_id = st.text_input("Ticket ID (e.g., INC1000)")
-        if st.button("Check Ticket"):
-            if ticket_id:
-                status = check_ticket_status(ticket_id)
-                if status.get("found"):
-                    st.success(f"Ticket found: {status['ticket_id']}")
-                    st.write(f"**Status:** {status['status']}")
-                    st.write(f"**Priority:** {status['priority']}")
-                    st.write(f"**Title:** {status['title']}")
-                    st.write(f"**Created:** {status['created_at']}")
-                else:
-                    st.error(status.get("message", "Ticket not found"))
-    
-    # Employee Directory
-    with st.expander("👥 Search Employee Directory"):
-        emp_name = st.text_input("Employee Name")
-        emp_dept = st.text_input("Department")
-        if st.button("Search"):
-            results = search_employee_directory(name=emp_name, department=emp_dept)
-            if results:
-                for emp in results:
-                    st.write(f"**{emp['name']}**")
-                    st.write(f"Email: {emp['email']}")
-                    st.write(f"Department: {emp['department']}")
-                    st.write(f"Phone: {emp['phone']}")
-                    st.write("---")
-            else:
-                st.info("No employees found")
-    
-    # Create Ticket
-    with st.expander("📝 Create Support Ticket"):
-        ticket_title = st.text_input("Issue Title")
-        ticket_desc = st.text_area("Description")
-        ticket_category = st.selectbox(
-            "Category",
-            ["password", "hardware", "software", "network", "access", "other"]
-        )
-        ticket_priority = st.selectbox(
-            "Priority",
-            ["low", "medium", "high", "critical"]
-        )
-        if st.button("Create Ticket"):
-            if ticket_title and ticket_desc:
-                ticket = create_support_ticket(
-                    title=ticket_title,
-                    description=ticket_desc,
-                    category=ticket_category,
-                    priority=ticket_priority
-                )
-                st.success(f"✅ Ticket created: {ticket['ticket_id']}")
-                st.json(ticket)
-            else:
-                st.error("Please fill in title and description")
-    
-    st.markdown("---")
-    
-    # Quick Actions
     st.header("⚡ Quick Actions")
-    if st.button("🔄 Clear Chat History"):
+    
+    # Clear Chat History
+    if st.button("🔄 Clear Chat History", use_container_width=True):
         st.session_state.messages = []
         st.session_state.chatbot.reset_conversation()
         st.rerun()
     
-    if st.button("📚 Show Knowledge Base Stats"):
-        articles = st.session_state.chatbot.get_relevant_articles("", k=15)
-        st.info(f"Knowledge Base contains {len(articles)} articles")
+    st.markdown("---")
+    
+    # Knowledge Base Stats - Creative Visualization
+    st.header("📚 Knowledge Base")
+    
+    if st.button("🔍 Explore Knowledge Base", use_container_width=True):
+        st.session_state.show_kb_stats = not st.session_state.show_kb_stats
+    
+    if st.session_state.show_kb_stats:
+        with open('it_knowledge_base.json', 'r') as f:
+            kb = json.load(f)
+        
+        # Total articles with emoji
+        st.metric("📖 Total Articles", len(kb))
+        
+        # Category breakdown with progress bars
+        st.subheader("📊 Categories")
+        categories = {}
+        for article in kb:
+            cat = article['category']
+            categories[cat] = categories.get(cat, 0) + 1
+        
+        # Sort by count
+        sorted_cats = sorted(categories.items(), key=lambda x: x[1], reverse=True)
+        
+        for cat, count in sorted_cats:
+            # Create visual progress bar
+            percentage = (count / len(kb)) * 100
+            st.write(f"**{cat}**")
+            st.progress(percentage / 100)
+            st.caption(f"{count} article(s) • {percentage:.1f}%")
+        
+        # Tag cloud (most common tags)
+        st.subheader("🏷️ Popular Tags")
+        all_tags = {}
+        for article in kb:
+            for tag in article['tags']:
+                all_tags[tag] = all_tags.get(tag, 0) + 1
+        
+        # Top 10 tags
+        top_tags = sorted(all_tags.items(), key=lambda x: x[1], reverse=True)[:10]
+        
+        # Display as columns
+        cols = st.columns(3)
+        for idx, (tag, count) in enumerate(top_tags):
+            with cols[idx % 3]:
+                st.metric(f"#{tag}", count, delta=None)
+        
+        # Quick stats
+        st.markdown("---")
+        st.subheader("📈 Quick Stats")
+        total_tags = sum(len(article['tags']) for article in kb)
+        avg_tags = total_tags / len(kb)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("🔖 Total Tags", total_tags)
+        with col2:
+            st.metric("📊 Avg Tags/Article", f"{avg_tags:.1f}")
+        
+        # Most comprehensive article
+        max_content = max(kb, key=lambda x: len(x['content']))
+        st.markdown("---")
+        st.subheader("📝 Most Detailed Article")
+        st.write(f"**{max_content['title']}**")
+        st.caption(f"{len(max_content['content'])} characters • {max_content['category']}")
 
 # Main chat interface
 st.subheader("💬 Chat with IT Support")
@@ -228,32 +225,44 @@ if not st.session_state.messages:
     st.info("👋 Welcome! I'm your IT Support Assistant. How can I help you today?")
     
     st.markdown("### 💡 Common Questions:")
+    
+    # Define common questions
+    common_questions = [
+        {"text": "🔐 How do I reset my password?", "query": "How do I reset my password?"},
+        {"text": "📧 Outlook not syncing", "query": "My Outlook is not syncing emails"},
+        {"text": "🔌 VPN connection issues", "query": "I can't connect to VPN"},
+        {"text": "🖨️ Printer not working", "query": "My printer is not responding"}
+    ]
+    
     col1, col2 = st.columns(2)
     
-    with col1:
-        if st.button("🔐 How do I reset my password?"):
-            st.session_state.messages.append({"role": "user", "content": "How do I reset my password?"})
-            st.rerun()
-        
-        if st.button("📧 Outlook not syncing"):
-            st.session_state.messages.append({"role": "user", "content": "My Outlook is not syncing emails"})
-            st.rerun()
-    
-    with col2:
-        if st.button("🔌 VPN connection issues"):
-            st.session_state.messages.append({"role": "user", "content": "I can't connect to VPN"})
-            st.rerun()
-        
-        if st.button("🖨️ Printer not working"):
-            st.session_state.messages.append({"role": "user", "content": "My printer is not responding"})
-            st.rerun()
+    for idx, question in enumerate(common_questions):
+        with col1 if idx % 2 == 0 else col2:
+            if st.button(question["text"], key=f"common_q_{idx}", use_container_width=True):
+                # Add user message to history
+                st.session_state.messages.append({"role": "user", "content": question["query"]})
+                
+                # Get chatbot response
+                with st.spinner("🔍 Searching knowledge base..."):
+                    response, sources, func_result = st.session_state.chatbot.process_message(question["query"])
+                
+                # Add assistant message to history
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": response,
+                    "sources": sources,
+                    "function_result": func_result
+                })
+                
+                # Rerun to display the conversation
+                st.rerun()
 
 # Footer
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; padding: 1rem;">
     <small>
-        🤖 IT Support Chatbot powered by RAG + LangChain + Azure OpenAI<br>
+        🤖 IT Support Chatbot powered by RAG + LangChain + OpenAI<br>
         Need urgent help? Call IT Help Desk: ext. 4357
     </small>
 </div>

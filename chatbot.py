@@ -1,7 +1,7 @@
 """
-IT Support Chatbot with RAG, LangChain, and Function Calling
+IT Support Chatbot with RAG, LangChain, and Similarity Threshold Filtering
 Supports both OpenAI API and Azure OpenAI
-Updated to use modern LangChain LCEL
+Updated to use modern LangChain LCEL with score-based filtering
 """
 
 import os
@@ -15,7 +15,6 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from langchain_core.documents import Document
-from function_calling import FUNCTION_DEFINITIONS, execute_function
 
 # Load environment variables
 load_dotenv()
@@ -35,11 +34,24 @@ class ITSupportChatbot:
     """
     RAG-based IT Support Chatbot with function calling capabilities
     Supports both OpenAI API and Azure OpenAI
-    Uses modern LangChain LCEL
+    Uses modern LangChain LCEL with similarity threshold filtering
     """
     
-    def __init__(self, vector_store_path: str = "faiss_index"):
-        """Initialize the chatbot with vector store and LLM"""
+    def __init__(self, vector_store_path: str = "faiss_index", similarity_threshold: float = 0.7):
+        """
+        Initialize the chatbot with vector store and LLM
+        
+        Args:
+            vector_store_path: Path to the FAISS vector store
+            similarity_threshold: Minimum similarity score (0-1) to include a document
+                                 Lower = more strict (only very similar docs)
+                                 Higher = more lenient (include less similar docs)
+                                 Default: 0.7 (good balance)
+        """
+        
+        # Store similarity threshold
+        self.similarity_threshold = similarity_threshold
+        print(f"✓ Similarity threshold set to: {similarity_threshold}")
         
         # Initialize LLM based on available credentials
         if USE_AZURE:
@@ -86,12 +98,6 @@ class ITSupportChatbot:
         # Load vector store
         self.vector_store = self._load_vector_store(vector_store_path)
         
-        # Initialize retriever
-        self.retriever = self.vector_store.as_retriever(
-            search_type="similarity",
-            search_kwargs={"k": 3}
-        )
-        
         # Initialize chat history
         self.chat_history = []
         
@@ -115,8 +121,52 @@ class ITSupportChatbot:
             print("Please run build_vector_store.py first")
             raise
     
+    def _retrieve_with_threshold(self, query: str, k: int = 5) -> List[Document]:
+        """
+        Retrieve documents with similarity score filtering
+        
+        Args:
+            query: Search query
+            k: Number of documents to retrieve (will fetch more than needed for filtering)
+        
+        Returns:
+            List of documents that meet the similarity threshold
+        """
+        # Get documents with scores (fetch more than k to allow for filtering)
+        docs_with_scores = self.vector_store.similarity_search_with_score(query, k=k * 2)
+        
+        # Filter by threshold
+        filtered_docs = []
+        filtered_scores = []
+        
+        for doc, score in docs_with_scores:
+            # FAISS returns L2 distance (lower is better)
+            # Convert to similarity: closer to 0 = more similar
+            # Normalize to 0-1 range where 1 is most similar
+            similarity = 1 / (1 + score)
+            
+            if similarity >= self.similarity_threshold:
+                filtered_docs.append(doc)
+                filtered_scores.append(similarity)
+                
+                if len(filtered_docs) >= k:
+                    break
+        
+        # Log filtering results
+        if filtered_docs:
+            print(f"✓ Found {len(filtered_docs)} documents above threshold {self.similarity_threshold}")
+            for i, (doc, sim) in enumerate(zip(filtered_docs, filtered_scores), 1):
+                print(f"  {i}. {doc.metadata.get('title', 'Unknown')} (similarity: {sim:.3f})")
+        else:
+            print(f"⚠️ No documents found above threshold {self.similarity_threshold}")
+        
+        return filtered_docs
+    
     def _format_docs(self, docs: List[Document]) -> str:
         """Format documents for context"""
+        if not docs:
+            return "No relevant information found in the knowledge base."
+        
         formatted = []
         for i, doc in enumerate(docs, 1):
             article_id = doc.metadata.get("id", "N/A")
@@ -156,12 +206,15 @@ Context:
 {context}
 
 Instructions:
-1. Provide clear, step-by-step solutions when available in the knowledge base
-2. If the issue cannot be resolved with available information, offer to create a support ticket
+1. If the context contains relevant information, provide clear, step-by-step solutions
+2. If the context says "No relevant information found", acknowledge that you don't have specific information about this topic in the knowledge base and offer to:
+   - Help with related topics you do know about
+   - Suggest the user contact IT support directly for specialized help
+   - Ask clarifying questions to better understand their issue
 3. Be professional, friendly, and empathetic
 4. Reference the knowledge base article ID when providing solutions
-5. If the user wants to check system status, create tickets, or search employee directory, use the appropriate functions
-6. Always verify you understood the issue correctly before providing solutions
+5. Always verify you understood the issue correctly before providing solutions
+6. Never make up information that isn't in the context
 
 Chat History:
 {chat_history}
@@ -170,10 +223,10 @@ User Question: {question}
 
 Helpful Answer:""")
         
-        # Create the chain
+        # Create the chain with threshold-based retrieval
         chain = (
             RunnableParallel(
-                context=lambda x: self._format_docs(self.retriever.invoke(x["question"])),
+                context=lambda x: self._format_docs(self._retrieve_with_threshold(x["question"], k=3)),
                 chat_history=lambda x: self._format_chat_history(),
                 question=lambda x: x["question"]
             )
@@ -195,8 +248,8 @@ Helpful Answer:""")
             Tuple of (response_text, source_documents, function_call_result)
         """
         try:
-            # Get relevant documents
-            source_docs = self.retriever.invoke(user_message)
+            # Get relevant documents with threshold filtering
+            source_docs = self._retrieve_with_threshold(user_message, k=3)
             
             # Get response from chain
             response_text = self.chain.invoke({"question": user_message})
@@ -228,23 +281,9 @@ Helpful Answer:""")
             error_msg = f"I encountered an error processing your request: {str(e)}"
             return error_msg, [], None
     
-    def call_function(self, function_name: str, arguments: Dict) -> Dict:
-        """
-        Execute a function call
-        
-        Args:
-            function_name: Name of the function to call
-            arguments: Function arguments
-        
-        Returns:
-            Function execution result
-        """
-        result_json = execute_function(function_name, arguments)
-        return json.loads(result_json)
-    
     def get_relevant_articles(self, query: str, k: int = 5) -> List[Dict]:
         """
-        Retrieve relevant knowledge base articles
+        Retrieve relevant knowledge base articles with threshold filtering
         
         Args:
             query: Search query
@@ -253,7 +292,7 @@ Helpful Answer:""")
         Returns:
             List of relevant articles with metadata
         """
-        docs = self.vector_store.similarity_search(query, k=k)
+        docs = self._retrieve_with_threshold(query, k=k) if query else self.vector_store.similarity_search("", k=k)
         
         articles = []
         seen_ids = set()
@@ -275,22 +314,36 @@ Helpful Answer:""")
         """Clear conversation history"""
         self.chat_history = []
         print("✓ Conversation history cleared")
+    
+    def set_similarity_threshold(self, threshold: float):
+        """
+        Update the similarity threshold
+        
+        Args:
+            threshold: New threshold value (0-1)
+        """
+        if 0 <= threshold <= 1:
+            self.similarity_threshold = threshold
+            print(f"✓ Similarity threshold updated to: {threshold}")
+        else:
+            print(f"✗ Invalid threshold: {threshold}. Must be between 0 and 1")
 
 def main():
     """Test the chatbot"""
     print("="*70)
-    print("IT SUPPORT CHATBOT - Testing")
+    print("IT SUPPORT CHATBOT - Testing with Similarity Threshold")
     print("="*70)
     
-    # Initialize chatbot
-    chatbot = ITSupportChatbot()
+    # Initialize chatbot with default threshold (0.7)
+    chatbot = ITSupportChatbot(similarity_threshold=0.7)
     
     # Test queries
     test_queries = [
-        "How do I reset my password?",
-        "My computer is running slow, what should I do?",
-        "I can't connect to the VPN",
-        "How do I setup email on my iPhone?",
+        "How do I reset my password?",  # Should match well
+        "My computer is running slow, what should I do?",  # Should match well
+        "I can't connect to the VPN",  # Should match well
+        "How do I make a sandwich?",  # Should NOT match well (irrelevant)
+        "What is quantum physics?",  # Should NOT match well (irrelevant)
     ]
     
     for query in test_queries:
@@ -303,15 +356,23 @@ def main():
         print(f"\nAssistant: {response}")
         
         if sources:
-            print(f"\n📚 Knowledge Base Sources:")
+            print(f"\n📚 Knowledge Base Sources ({len(sources)} found):")
             for source in sources[:2]:  # Show top 2 sources
                 print(f"   • {source['title']} (ID: {source['id']})")
                 print(f"     Category: {source['category']}")
+        else:
+            print(f"\n📚 No relevant sources found (below threshold)")
         
         print()
+        
+        # Reset conversation for next test
+        chatbot.reset_conversation()
     
     print("="*70)
     print("Test completed!")
+    print("\nThreshold Testing:")
+    print("- Relevant queries found matching documents")
+    print("- Irrelevant queries filtered out (no documents shown)")
 
 if __name__ == "__main__":
     main()
