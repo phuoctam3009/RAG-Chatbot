@@ -9,11 +9,13 @@ This is a production-ready IT Support Chatbot built for Workshop 4: RAG Systems 
 ## 📂 File Structure (14 Files)
 
 ### 🚀 Getting Started
+
 1. **QUICK_START.md** - 5-minute setup guide (start here!)
 2. **README.md** - Comprehensive documentation (800+ lines)
 3. **setup.py** - Automated setup script
 
 ### 💻 Core Application (1,000+ lines)
+
 4. **app.py** (280 lines) - Streamlit web interface
 5. **chatbot.py** (220 lines) - Main RAG chatbot with LangChain
 6. **function_calling.py** (250 lines) - Function definitions & implementations
@@ -21,18 +23,22 @@ This is a production-ready IT Support Chatbot built for Workshop 4: RAG Systems 
 8. **generate_mock_data.py** (170 lines) - Mock data generator
 
 ### 📊 Data Files
+
 9. **it_knowledge_base.json** - 15 IT support articles (primary data)
 10. **it_knowledge_base.csv** - Same data in CSV format
 11. **requirements.txt** - Python dependencies
 
 ### 📚 Documentation (2,000+ lines)
+
 12. **WORKSHOP_GUIDE.md** (600 lines) - Complete workshop curriculum
 13. **PROJECT_SUMMARY.md** (500 lines) - Project overview & business case
 
 ### 🧪 Testing & Demo
+
 14. **IT_Support_Chatbot_Demo.ipynb** - Interactive Jupyter notebook
 
 ### ⚙️ Configuration
+
 - **.env.example** - Environment variables template
 - **.gitignore** - Version control ignore rules
 
@@ -49,9 +55,6 @@ This is a production-ready IT Support Chatbot built for Workshop 4: RAG Systems 
 
 **Understand the full system**
 → `README.md` (complete guide)
-
-**Run the workshop**
-→ `WORKSHOP_GUIDE.md` (workshop curriculum)
 
 **See business value**
 → `PROJECT_SUMMARY.md` (ROI, architecture, metrics)
@@ -92,69 +95,78 @@ jupyter notebook IT_Support_Chatbot_Demo.ipynb
 All requirements completed:
 
 ✅ **Problem Statement**
-   - File: `PROJECT_SUMMARY.md` (Section: Problem Statement)
-   - IT support automation reducing 70% of simple tickets
+
+- File: `PROJECT_SUMMARY.md` (Section: Problem Statement)
+- IT support automation reducing 70% of simple tickets
 
 ✅ **Mock Data Schema**
-   - Files: `it_knowledge_base.json`, `it_knowledge_base.csv`
-   - 15 IT articles with metadata structure
-   - Generator: `generate_mock_data.py`
+
+- Files: `it_knowledge_base.json`, `it_knowledge_base.csv`
+- 15 IT articles with metadata structure
+- Generator: `generate_mock_data.py`
 
 ✅ **Vector Store (FAISS)**
-   - Builder: `build_vector_store.py`
-   - Creates `faiss_index/` directory
-   - 45 document chunks with embeddings
+
+- Builder: `build_vector_store.py`
+- Creates `faiss_index/` directory
+- 45 document chunks with embeddings
 
 ✅ **LangChain Configuration**
-   - File: `chatbot.py` (Lines 45-95)
-   - ConversationalRetrievalChain
-   - Custom prompt templates
-   - Conversation memory
+
+- File: `chatbot.py` (Lines 45-95)
+- ConversationalRetrievalChain
+- Custom prompt templates
+- Conversation memory
 
 ✅ **Azure OpenAI Function Calling**
-   - File: `function_calling.py`
-   - 4 functions: create_ticket, check_status, system_status, search_directory
-   - Integrated with chatbot
+
+- File: `function_calling.py`
+- 4 functions: create_ticket, check_status, system_status, search_directory
+- Integrated with chatbot
 
 ✅ **Functional Chatbot Prototype with UI**
-   - File: `app.py`
-   - Streamlit web interface
-   - Chat, sidebar tools, system monitoring
+
+- File: `app.py`
+- Streamlit web interface
+- Chat, sidebar tools, system monitoring
 
 ---
 
 ## 🏗️ Technology Stack
 
-| Component | Technology | File |
-|-----------|-----------|------|
-| Vector Store | FAISS | build_vector_store.py |
-| Framework | LangChain | chatbot.py |
-| LLM | Azure OpenAI GPT-4 | chatbot.py |
-| Embeddings | text-embedding-ada-002 | build_vector_store.py |
-| UI | Streamlit | app.py |
-| Functions | Python decorators | function_calling.py |
-| Data | JSON/CSV | it_knowledge_base.* |
-| Testing | Jupyter | IT_Support_Chatbot_Demo.ipynb |
+| Component    | Technology             | File                          |
+| ------------ | ---------------------- | ----------------------------- |
+| Vector Store | FAISS                  | build_vector_store.py         |
+| Framework    | LangChain              | chatbot.py                    |
+| LLM          | Azure OpenAI GPT-4     | chatbot.py                    |
+| Embeddings   | text-embedding-ada-002 | build_vector_store.py         |
+| UI           | Streamlit              | app.py                        |
+| Functions    | Python decorators      | function_calling.py           |
+| Data         | JSON/CSV               | it_knowledge_base.\*          |
+| Testing      | Jupyter                | IT_Support_Chatbot_Demo.ipynb |
 
 ---
 
 ## 📊 Project Statistics
 
 ### Code Metrics
+
 - **Total Lines:** 3,449
 - **Python Files:** 5 (1,050 lines)
 - **Documentation:** 4 files (2,000+ lines)
 - **Data Files:** 2 (15 articles)
-- **Functions:** 15+ 
+- **Functions:** 15+
 - **Classes:** 2 main classes
 
 ### Knowledge Base
+
 - **Articles:** 15
 - **Categories:** 11 (Password, VPN, Software, Email, Hardware, Network, Security, Teams, Backup, Performance, Access)
 - **Average Article Length:** ~300 words
 - **Vector Chunks:** 45
 
 ### Performance
+
 - **Response Time:** 1-3 seconds
 - **Retrieval Accuracy:** 87%
 - **Function Success:** 98%
@@ -165,18 +177,21 @@ All requirements completed:
 ## 💡 Key Features
 
 ### 1. RAG Architecture
+
 - FAISS vector store for fast similarity search
 - Semantic search (not just keywords)
 - Top-k retrieval (k=3 by default)
 - Source attribution
 
 ### 2. LangChain Integration
+
 - Conversational retrieval chain
 - Memory buffer for context
 - Custom prompt templates
 - Document chunking
 
 ### 3. Function Calling
+
 ```python
 Functions:
 ├── create_support_ticket()  # Create IT tickets
@@ -186,6 +201,7 @@ Functions:
 ```
 
 ### 4. User Interface
+
 - Clean chat interface
 - Sidebar with quick tools
 - System status dashboard
@@ -207,6 +223,7 @@ Functions:
 ## 💰 Business Value
 
 ### ROI Analysis
+
 - **Monthly Queries:** 1,000
 - **Automation Rate:** 70% (700 queries)
 - **Time Saved:** 58 hours/month
@@ -222,7 +239,9 @@ Functions:
 ## 🔧 Customization Guide
 
 ### Add New Knowledge Base Article
+
 Edit `it_knowledge_base.json`:
+
 ```json
 {
   "id": "KB016",
@@ -233,23 +252,30 @@ Edit `it_knowledge_base.json`:
   "related_issues": []
 }
 ```
+
 Then: `python build_vector_store.py`
 
 ### Add New Function
+
 In `function_calling.py`:
+
 1. Define function
 2. Add to `FUNCTION_DEFINITIONS`
 3. Add to `AVAILABLE_FUNCTIONS`
 
 ### Customize UI
+
 Edit `app.py`:
+
 - Modify CSS in `st.markdown()`
 - Add sidebar widgets
 - Change color scheme
 - Add new pages
 
 ### Adjust Response Style
+
 Edit `chatbot.py`:
+
 - Modify `prompt_template`
 - Change temperature
 - Adjust retrieval k value
@@ -259,21 +285,25 @@ Edit `chatbot.py`:
 ## 🧪 Testing
 
 ### Quick Test
+
 ```bash
 python chatbot.py
 ```
 
 ### Interactive Testing
+
 ```bash
 jupyter notebook IT_Support_Chatbot_Demo.ipynb
 ```
 
 ### UI Testing
+
 ```bash
 streamlit run app.py
 ```
 
 ### Test Queries
+
 - "How do I reset my password?"
 - "My computer is slow"
 - "I can't connect to VPN"
@@ -284,23 +314,27 @@ streamlit run app.py
 ## 📖 Documentation Map
 
 ### For Developers
+
 1. Start: `QUICK_START.md`
 2. Deep dive: `README.md`
 3. Code: `chatbot.py`, `function_calling.py`
 4. Test: `IT_Support_Chatbot_Demo.ipynb`
 
 ### For Workshop Instructors
+
 1. Curriculum: `WORKSHOP_GUIDE.md`
 2. Demo: `app.py` (Streamlit)
 3. Exercises: `IT_Support_Chatbot_Demo.ipynb`
 4. Presentation: `PROJECT_SUMMARY.md`
 
 ### For Business Stakeholders
+
 1. Overview: `PROJECT_SUMMARY.md`
 2. Business case: `PROJECT_SUMMARY.md` (ROI section)
 3. Demo: `streamlit run app.py`
 
 ### For Students/Learners
+
 1. Quick start: `QUICK_START.md`
 2. Workshop: `WORKSHOP_GUIDE.md`
 3. Practice: `IT_Support_Chatbot_Demo.ipynb`
@@ -311,11 +345,13 @@ streamlit run app.py
 ## 🚀 Deployment Options
 
 ### Local Development
+
 ```bash
 streamlit run app.py
 ```
 
 ### Docker
+
 ```dockerfile
 FROM python:3.9
 COPY . /app
@@ -325,6 +361,7 @@ CMD ["streamlit", "run", "app.py"]
 ```
 
 ### Cloud Options
+
 - **Streamlit Cloud** - Free tier available
 - **Azure Web App** - Enterprise ready
 - **AWS EC2** - Full control
@@ -335,12 +372,14 @@ CMD ["streamlit", "run", "app.py"]
 ## 🔒 Security
 
 ### Implemented
+
 ✅ Environment variables for secrets
 ✅ .env excluded from git
 ✅ Input validation
 ✅ Error handling
 
 ### Production Recommendations
+
 - Add authentication (Azure AD)
 - Implement rate limiting
 - Enable audit logging
@@ -352,18 +391,21 @@ CMD ["streamlit", "run", "app.py"]
 ## 📈 Next Steps
 
 ### Immediate (Week 1)
+
 1. Test with real users
 2. Gather feedback
 3. Add more articles
 4. Monitor performance
 
 ### Short-term (Month 1)
+
 5. Integrate with ServiceNow
 6. Add analytics dashboard
 7. Implement A/B testing
 8. Train support team
 
 ### Long-term (Quarter 1)
+
 9. Multi-language support
 10. Voice interface
 11. Mobile app
@@ -374,18 +416,21 @@ CMD ["streamlit", "run", "app.py"]
 ## 🏆 Success Criteria
 
 ### Technical ✅
+
 - Response time <3s
 - Retrieval accuracy >85%
 - Function success >95%
 - Zero critical bugs
 
 ### Business ✅
+
 - 70% ticket reduction
 - <$200/month cost
 - Positive user feedback
 - ROI >500%
 
 ### User Experience ✅
+
 - Intuitive interface
 - Helpful responses
 - Clear sources
@@ -398,12 +443,14 @@ CMD ["streamlit", "run", "app.py"]
 ## 📞 Support
 
 ### Documentation
+
 - In-code comments
 - Comprehensive README
 - Workshop guide
 - Jupyter examples
 
 ### External Resources
+
 - LangChain: https://python.langchain.com
 - Azure OpenAI: https://learn.microsoft.com/azure/ai-services/openai
 - FAISS: https://github.com/facebookresearch/faiss
@@ -414,6 +461,7 @@ CMD ["streamlit", "run", "app.py"]
 ## 🎉 Summary
 
 ### What You Have
+
 ✅ Production-ready IT support chatbot
 ✅ RAG system with FAISS vector store
 ✅ LangChain conversational AI
@@ -424,6 +472,7 @@ CMD ["streamlit", "run", "app.py"]
 ✅ Deployment ready
 
 ### What It Does
+
 - Answers IT questions instantly
 - Creates support tickets
 - Checks system status
@@ -432,6 +481,7 @@ CMD ["streamlit", "run", "app.py"]
 - Saves $2,700+/month
 
 ### What You Can Do
+
 - Deploy to production immediately
 - Customize for your organization
 - Extend with new functions
@@ -444,12 +494,14 @@ CMD ["streamlit", "run", "app.py"]
 ## 🏁 Getting Started Right Now
 
 **Option 1: Quick Demo (2 minutes)**
+
 ```bash
 python setup.py
 streamlit run app.py
 ```
 
 **Option 2: Interactive Learning (30 minutes)**
+
 ```bash
 jupyter notebook IT_Support_Chatbot_Demo.ipynb
 ```
@@ -468,5 +520,5 @@ Follow `WORKSHOP_GUIDE.md`
 
 ---
 
-*Workshop 4: Building Chatbot RAG Systems*
-*Retrieval-Augmented Generation with Vector Store, LangChain & Function Calling*
+_Workshop 4: Building Chatbot RAG Systems_
+_Retrieval-Augmented Generation with Vector Store, LangChain & Function Calling_

@@ -1,11 +1,10 @@
 """
 Streamlit UI for IT Support Chatbot
-Enhanced version with creative knowledge base stats and fixed common questions
 """
 
 import streamlit as st
-from chatbot import ITSupportChatbot
 import json
+from chatbot import ITSupportChatbot
 
 # Page configuration
 st.set_page_config(
@@ -45,26 +44,6 @@ st.markdown("""
         border-left: 3px solid #ff9800;
         margin: 0.5rem 0;
     }
-    .function-result {
-        background-color: #e8f5e9;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #4caf50;
-        margin: 1rem 0;
-    }
-    .common-question-btn {
-        background-color: #e3f2fd;
-        padding: 0.8rem;
-        border-radius: 0.5rem;
-        border: 2px solid #1f77b4;
-        cursor: pointer;
-        margin: 0.5rem 0;
-        transition: all 0.3s;
-    }
-    .common-question-btn:hover {
-        background-color: #bbdefb;
-        transform: translateY(-2px);
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -92,7 +71,7 @@ if not st.session_state.get('initialized', False):
     st.error(f"⚠️ Failed to initialize chatbot: {st.session_state.get('error', 'Unknown error')}")
     st.info("💡 Please ensure you have:")
     st.markdown("""
-    1. Created a `.env` file with your OpenAI or Azure OpenAI credentials
+    1. Created a `.env` file with your API credentials
     2. Run `python build_vector_store.py` to create the vector store
     3. Installed all requirements: `pip install -r requirements.txt`
     """)
@@ -102,78 +81,62 @@ if not st.session_state.get('initialized', False):
 with st.sidebar:
     st.header("⚡ Quick Actions")
     
-    # Clear Chat History
-    if st.button("🔄 Clear Chat History", use_container_width=True):
+    if st.button("🔄 Clear Chat History"):
         st.session_state.messages = []
         st.session_state.chatbot.reset_conversation()
         st.rerun()
     
     st.markdown("---")
-    
-    # Knowledge Base Stats - Creative Visualization
     st.header("📚 Knowledge Base")
     
-    if st.button("🔍 Explore Knowledge Base", use_container_width=True):
+    if st.button("🔍 Explore Knowledge Base"):
         st.session_state.show_kb_stats = not st.session_state.show_kb_stats
     
     if st.session_state.show_kb_stats:
-        with open('it_knowledge_base.json', 'r') as f:
-            kb = json.load(f)
-        
-        # Total articles with emoji
-        st.metric("📖 Total Articles", len(kb))
-        
-        # Category breakdown with progress bars
-        st.subheader("📊 Categories")
-        categories = {}
-        for article in kb:
-            cat = article['category']
-            categories[cat] = categories.get(cat, 0) + 1
-        
-        # Sort by count
-        sorted_cats = sorted(categories.items(), key=lambda x: x[1], reverse=True)
-        
-        for cat, count in sorted_cats:
-            # Create visual progress bar
-            percentage = (count / len(kb)) * 100
-            st.write(f"**{cat}**")
-            st.progress(percentage / 100)
-            st.caption(f"{count} article(s) • {percentage:.1f}%")
-        
-        # Tag cloud (most common tags)
-        st.subheader("🏷️ Popular Tags")
-        all_tags = {}
-        for article in kb:
-            for tag in article['tags']:
-                all_tags[tag] = all_tags.get(tag, 0) + 1
-        
-        # Top 10 tags
-        top_tags = sorted(all_tags.items(), key=lambda x: x[1], reverse=True)[:10]
-        
-        # Display as columns
-        cols = st.columns(3)
-        for idx, (tag, count) in enumerate(top_tags):
-            with cols[idx % 3]:
-                st.metric(f"#{tag}", count, delta=None)
-        
-        # Quick stats
-        st.markdown("---")
-        st.subheader("📈 Quick Stats")
-        total_tags = sum(len(article['tags']) for article in kb)
-        avg_tags = total_tags / len(kb)
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("🔖 Total Tags", total_tags)
-        with col2:
-            st.metric("📊 Avg Tags/Article", f"{avg_tags:.1f}")
-        
-        # Most comprehensive article
-        max_content = max(kb, key=lambda x: len(x['content']))
-        st.markdown("---")
-        st.subheader("📝 Most Detailed Article")
-        st.write(f"**{max_content['title']}**")
-        st.caption(f"{len(max_content['content'])} characters • {max_content['category']}")
+        try:
+            with open('it_knowledge_base.json', 'r', encoding='utf-8') as f:
+                kb_data = json.load(f)
+            
+            st.metric("📖 Total Articles", len(kb_data))
+            
+            st.subheader("📊 Categories")
+            categories = {}
+            for article in kb_data:
+                cat = article['category']
+                categories[cat] = categories.get(cat, 0) + 1
+            
+            for cat, count in sorted(categories.items(), key=lambda x: x[1], reverse=True):
+                percentage = (count / len(kb_data)) * 100
+                st.write(f"**{cat}**")
+                st.progress(percentage / 100)
+                st.caption(f"{count} articles ({percentage:.1f}%)")
+            
+            st.subheader("🏷️ Popular Tags")
+            all_tags = {}
+            for article in kb_data:
+                for tag in article.get('tags', []):
+                    all_tags[tag] = all_tags.get(tag, 0) + 1
+            
+            top_tags = sorted(all_tags.items(), key=lambda x: x[1], reverse=True)[:10]
+            cols = st.columns(3)
+            for i, (tag, count) in enumerate(top_tags):
+                with cols[i % 3]:
+                    st.metric(f"#{tag}", count)
+            
+            st.subheader("📈 Quick Stats")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Total Tags", sum(all_tags.values()))
+            with col2:
+                avg_tags = sum(len(article.get('tags', [])) for article in kb_data) / len(kb_data)
+                st.metric("Avg Tags/Article", f"{avg_tags:.1f}")
+            
+            st.subheader("📝 Most Detailed")
+            longest = max(kb_data, key=lambda x: len(x['content']))
+            st.info(f"**{longest['title']}**\n\n{len(longest['content'])} characters • {longest['category']}")
+            
+        except Exception as e:
+            st.error(f"Error loading KB stats: {e}")
 
 # Main chat interface
 st.subheader("💬 Chat with IT Support")
@@ -181,52 +144,48 @@ st.subheader("💬 Chat with IT Support")
 # Display chat history
 for message in st.session_state.messages:
     if message["role"] == "user":
-        st.markdown(f'<div class="chat-message user-message"><strong>You:</strong> {message["content"]}</div>', 
-                   unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="chat-message user-message"><strong>You:</strong> {message["content"]}</div>',
+            unsafe_allow_html=True
+        )
     else:
-        st.markdown(f'<div class="chat-message assistant-message"><strong>IT Support:</strong> {message["content"]}</div>', 
-                   unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="chat-message assistant-message"><strong>IT Support:</strong> {message["content"]}</div>',
+            unsafe_allow_html=True
+        )
         
-        # Show sources if available
         if "sources" in message and message["sources"]:
             with st.expander("📚 Knowledge Base Sources"):
                 for source in message["sources"]:
-                    st.markdown(f"""
-                    <div class="source-card">
-                        <strong>{source['title']}</strong> (ID: {source['id']})<br>
-                        <em>Category: {source['category']}</em>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown(
+                        f'<div class="source-card"><strong>{source["title"]}</strong> (ID: {source["id"]})<br>'
+                        f'<em>Category: {source["category"]}</em></div>',
+                        unsafe_allow_html=True
+                    )
 
 # Chat input
 user_input = st.chat_input("Type your IT question here...")
 
 if user_input:
-    # Add user message to history
     st.session_state.messages.append({"role": "user", "content": user_input})
     
-    # Get chatbot response
     with st.spinner("🔍 Searching knowledge base..."):
-        response, sources, func_result = st.session_state.chatbot.process_message(user_input)
+        response, sources, _ = st.session_state.chatbot.process_message(user_input)
     
-    # Add assistant message to history
     st.session_state.messages.append({
         "role": "assistant",
         "content": response,
-        "sources": sources,
-        "function_result": func_result
+        "sources": sources
     })
     
-    # Rerun to display new messages
     st.rerun()
 
-# Welcome message if no chat history
+# Welcome message
 if not st.session_state.messages:
     st.info("👋 Welcome! I'm your IT Support Assistant. How can I help you today?")
     
     st.markdown("### 💡 Common Questions:")
     
-    # Define common questions
     common_questions = [
         {"text": "🔐 How do I reset my password?", "query": "How do I reset my password?"},
         {"text": "📧 Outlook not syncing", "query": "My Outlook is not syncing emails"},
@@ -235,35 +194,23 @@ if not st.session_state.messages:
     ]
     
     col1, col2 = st.columns(2)
-    
-    for idx, question in enumerate(common_questions):
-        with col1 if idx % 2 == 0 else col2:
-            if st.button(question["text"], key=f"common_q_{idx}", use_container_width=True):
-                # Add user message to history
-                st.session_state.messages.append({"role": "user", "content": question["query"]})
-                
-                # Get chatbot response
+    for i, q in enumerate(common_questions):
+        with col1 if i % 2 == 0 else col2:
+            if st.button(q["text"], key=f"q_{i}"):
+                st.session_state.messages.append({"role": "user", "content": q["query"]})
                 with st.spinner("🔍 Searching knowledge base..."):
-                    response, sources, func_result = st.session_state.chatbot.process_message(question["query"])
-                
-                # Add assistant message to history
+                    response, sources, _ = st.session_state.chatbot.process_message(q["query"])
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": response,
-                    "sources": sources,
-                    "function_result": func_result
+                    "sources": sources
                 })
-                
-                # Rerun to display the conversation
                 st.rerun()
 
 # Footer
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; padding: 1rem;">
-    <small>
-        🤖 IT Support Chatbot powered by RAG + LangChain + OpenAI<br>
-        Need urgent help? Call IT Help Desk: ext. 4357
-    </small>
+    <small>🤖 IT Support Chatbot powered by RAG + LangChain</small>
 </div>
 """, unsafe_allow_html=True)
