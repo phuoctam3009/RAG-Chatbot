@@ -1,21 +1,17 @@
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║                    IT SUPPORT CHATBOT ARCHITECTURE v2.0                      ║
-║                    RAG + Vector Store + LangChain (Improved)                 ║
+║                    IT SUPPORT CHATBOT ARCHITECTURE                           ║
+║                    RAG + Vector Store + Function Calling                     ║
+║                         Current Production State                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                          PRESENTATION LAYER                                  │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
-│  │  Streamlit Web Interface (app.py) - IMPROVED                           │ │
+│  │  Streamlit Web Interface (app.py)                                      │ │
 │  │  • Chat interface with message history                                 │ │
-│  │  • Enhanced sidebar with interactive KB stats                          │ │
+│  │  • Sidebar tools (ticket creation, system status, directory)           │ │
 │  │  • Session state management                                            │ │
 │  │  • Source attribution display                                          │ │
-│  │  • Working common question buttons                                     │ │
-│  │  • Visual statistics with progress bars                                │ │
-│  │  ✨ NEW: Interactive knowledge base explorer                           │ │
-│  │  ✨ NEW: Tag cloud visualization                                       │ │
-│  │  ❌ REMOVED: IT Support Tools (tickets, system status, directory)      │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 └──────────────────────────────────┬──────────────────────────────────────────┘
                                    │
@@ -198,7 +194,7 @@ Business Impact:
 
                           FILE DEPENDENCIES
 
-app.py (IMPROVED v2.0)
+app.py
 ├── requires: chatbot.py, it_knowledge_base.json
 ├── imports: streamlit, json
 ├── creates: UI session state, interactive statistics
@@ -211,11 +207,6 @@ chatbot.py (Modern LCEL version)
 ├── removed: ConversationalRetrievalChain (deprecated)
 ├── new: Modern LCEL chain with RunnableParallel
 └── creates: ITSupportChatbot instance
-
-function_calling.py (NOT USED IN v2.0)
-├── status: Available but not integrated
-├── functions: create_ticket, check_status, etc.
-└── note: Can be re-added if needed
 
 build_vector_store.py (Flexible version)
 ├── requires: it_knowledge_base.json
@@ -247,7 +238,7 @@ st.session_state:
 │   │   ├── role: "user" | "assistant"
 │   │   ├── content: str (message text)
 │   │   ├── sources: List[Dict] (optional, for assistant)
-│   │   └── function_result: Dict (optional, not used in v2.0)
+│   │   └── function_result: Dict (optional)
 │   └── Maintains full conversation history
 │
 └── show_kb_stats: bool
@@ -403,35 +394,6 @@ app.py Layout:
 
 ═══════════════════════════════════════════════════════════════════════════════
 
-                    CHANGES FROM v1.0 TO v2.0
-
-REMOVED Features:
-├── ❌ IT Support Tools section
-├── ❌ System Status Checker
-├── ❌ Ticket Status Checker  
-├── ❌ Employee Directory Search
-├── ❌ Create Support Ticket form
-├── ❌ function_calling.py integration
-└── ❌ ConversationalRetrievalChain (deprecated LangChain)
-
-ADDED Features:
-├── ✨ Interactive KB statistics toggle
-├── ✨ Visual progress bars for categories
-├── ✨ Tag cloud with 3-column grid
-├── ✨ Quick stats dashboard
-├── ✨ Most detailed article highlight
-├── ✨ Modern LCEL chain implementation
-└── ✨ Working common question buttons (FIXED)
-
-IMPROVED Features:
-├── 🔧 Sidebar: 200 lines → 80 lines (60% reduction)
-├── 🔧 Statistics: 1 → 10+ metrics (900% increase)
-├── 🔧 Common questions: Now fully functional
-├── 🔧 Code structure: Cleaner, more maintainable
-└── 🔧 User experience: More intuitive and visual
-
-═══════════════════════════════════════════════════════════════════════════════
-
                     CONFIGURATION & ENVIRONMENT
 
 Required Environment Variables:
@@ -489,10 +451,6 @@ Problem: "Knowledge base not found"
 Problem: Statistics don't show
 └─→ Click "Explore Knowledge Base" button (it toggles)
 
-Problem: Common questions don't work
-├─→ Check: Using new app.py (v2.0)?
-└─→ Check: Chatbot initialized successfully?
-
 Problem: LangChain import errors
 └─→ Update: pip install --upgrade langchain langchain-openai langchain-community
 
@@ -503,7 +461,6 @@ Problem: API errors
 
 ═══════════════════════════════════════════════════════════════════════════════
 
-Version: 2.0.0 (Improved & Streamlined)
 Status: Production Ready ✅
 Updated: October 2025
 Architecture: RAG with Modern LangChain LCEL
